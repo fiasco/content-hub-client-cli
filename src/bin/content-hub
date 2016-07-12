@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->add(new Command\ListWebhooksCommand());
+$application->add(new Command\ListClientsCommand());
+$application->add(new Command\ClientRegisterCommand());
+$application->add(new Command\ClientDeleteCommand());
+$application->add(new Command\WebhookDeleteCommand());
+$application->add(new Command\WebhookAddCommand());
+$application->run();
