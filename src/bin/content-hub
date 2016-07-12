@@ -15,4 +15,5 @@ $application->add(new Command\WebhookAddCommand());
 $application->add(new Command\EntitiesListCommand());
 $application->add(new Command\EntitiesDeleteCommand());
 $application->add(new Command\EntitiesPurgeCommand());
+$application->add(new Command\EntitiesReindexCommand());
 $application->run();
