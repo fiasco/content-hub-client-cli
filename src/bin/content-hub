@@ -12,4 +12,5 @@ $application->add(new Command\ClientRegisterCommand());
 $application->add(new Command\ClientDeleteCommand());
 $application->add(new Command\WebhookDeleteCommand());
 $application->add(new Command\WebhookAddCommand());
+$application->add(new Command\EntitiesListCommand());
 $application->run();
