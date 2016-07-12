@@ -38,6 +38,13 @@ class EntitiesListCommand extends Command
                'Offset to start from.',
                0
             )
+            ->addOption(
+               'type',
+               't',
+               InputOption::VALUE_OPTIONAL,
+               'The type of entity to retrieve',
+               ''
+            )
         ;
     }
 
@@ -48,7 +55,8 @@ class EntitiesListCommand extends Command
         $options = [
           'limit' => $input->getOption('limit'),
           'start' => $input->getOption('start'),
-          'fields' => 'title'
+          'fields' => 'title',
+          'type' => $input->getOption('type'),
         ];
 
         $client = $config->loadClient();
@@ -70,6 +78,8 @@ class EntitiesListCommand extends Command
             ->setRows($rows)
         ;
         $table->render();
+
+        $output->writeln('<info> Total records: ' . $entities['total'] . '</info>');
     }
 
 }
