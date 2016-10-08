@@ -16,13 +16,6 @@ class ClientDeleteCommand extends Command
         $this
             ->setName('client:delete')
             ->setDescription('Delete a Client by UUID')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
             ->addArgument(
                'uuid',
                InputArgument::REQUIRED,
@@ -33,7 +26,7 @@ class ClientDeleteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
 
         $client = $config->loadClient();
         $client->delete('settings/client/uuid/' . $input->getArgument('uuid'));

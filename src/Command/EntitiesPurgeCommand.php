@@ -17,13 +17,6 @@ class EntitiesPurgeCommand extends Command
         $this
             ->setName('entities:purge')
             ->setDescription('Delete all entities in the content hub instance')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
         ;
     }
 
@@ -37,7 +30,7 @@ class EntitiesPurgeCommand extends Command
             return;
         }
 
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
         $client = $config->loadClient();
 
         $entities = $client->listEntities();

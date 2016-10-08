@@ -23,13 +23,6 @@ class ClientRegisterCommand extends Command
               'The client name to register as. Must be Unique.'
             )
             ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
-            ->addOption(
               'api_key',
               'k',
               InputOption::VALUE_OPTIONAL,
@@ -52,50 +45,39 @@ class ClientRegisterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = new ClientConfig();
 
         $helper = $this->getHelper('question');
 
-        if (!$config->getApiKey()) {
-          if ($value = $input->getOption('api_key')) {
-            $config->setApiKey($value);
-          }
-          else {
-            $question = new Question('API Key: ');
-            $config->setApiKey($helper->ask($input, $output, $question));
-          }
+        if ($value = $input->getOption('api_key')) {
+          $config->setApiKey($value);
+        }
+        else {
+          $question = new Question('API Key: ');
+          $config->setApiKey($helper->ask($input, $output, $question));
         }
 
-        if (!$config->getSecretKey()) {
-          if ($value = $input->getOption('secret_key')) {
-            $config->setSecretKey($value);
-          }
-          else {
-            $question = new Question('Secret Key: ');
-            $config->setSecretKey($helper->ask($input, $output, $question));
-          }
+        if ($value = $input->getOption('secret_key')) {
+          $config->setSecretKey($value);
+        }
+        else {
+          $question = new Question('Secret Key: ');
+          $config->setSecretKey($helper->ask($input, $output, $question));
         }
 
-        if (!$config->getHostname()) {
-          if ($value = $input->getOption('hostname')) {
-            $config->setHostname($value);
-          }
-          else {
-            $question = new Question('Hostname: ');
-            $config->setHostname($helper->ask($input, $output, $question));
-          }
+        if ($value = $input->getOption('hostname')) {
+          $config->setHostname($value);
         }
-
-        if ($config->getOrigin()) {
-          $output->writeln('<error>Client already registered as ' . $config->getOrigin() . ' ' . $config->getClientName() . '</error>');
-          return;
+        else {
+          $question = new Question('Hostname: ');
+          $config->setHostname($helper->ask($input, $output, $question));
         }
 
         $client = $config->loadClient();
         $response = $client->register($input->getArgument('client_name'));
         $config->setOrigin($response['uuid'])
                ->setClientName($response['name']);
-        $config->save($input->getOption('config'));
+        $config->save($input->getArgument('client_name'));
 
         $output->writeln('<info>Client Registered as ' . $config->getOrigin() . ' ' . $config->getClientName() . '</info>');
     }

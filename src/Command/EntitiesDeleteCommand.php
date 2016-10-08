@@ -17,13 +17,6 @@ class EntitiesDeleteCommand extends Command
         $this
             ->setName('entity:delete')
             ->setDescription('Delete a specific entity by UUID')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
             ->addArgument(
                'uuid',
                InputArgument::REQUIRED,
@@ -34,7 +27,7 @@ class EntitiesDeleteCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
         $client = $config->loadClient();
 
         $entity = $client->readEntity($input->getArgument('uuid'));

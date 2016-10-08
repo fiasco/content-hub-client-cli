@@ -18,13 +18,6 @@ class EntitiesListCommand extends Command
             ->setName('entities:list')
             ->setDescription('List entities')
             ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
-            ->addOption(
                'limit',
                'l',
                InputOption::VALUE_OPTIONAL,
@@ -50,7 +43,7 @@ class EntitiesListCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
 
         $options = [
           'limit' => $input->getOption('limit'),

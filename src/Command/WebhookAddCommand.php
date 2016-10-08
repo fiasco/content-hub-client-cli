@@ -16,13 +16,6 @@ class WebhookAddCommand extends Command
         $this
             ->setName('webhook:add')
             ->setDescription('Add a webhook')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
             ->addArgument(
                'url',
                InputArgument::REQUIRED,
@@ -33,7 +26,7 @@ class WebhookAddCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
 
         $client = $config->loadClient();
         $client->addWebhook($input->getArgument('url'));

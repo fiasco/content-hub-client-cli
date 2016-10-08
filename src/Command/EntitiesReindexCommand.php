@@ -17,19 +17,12 @@ class EntitiesReindexCommand extends Command
         $this
             ->setName('entities:reindex')
             ->setDescription('Sets the backend to drop schema and reindex content.')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
         $client = $config->loadClient();
         $response = $client->post('reindex')->json();
 

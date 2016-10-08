@@ -3,6 +3,7 @@
 namespace Config;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
 use Acquia\ContentHubClient\ContentHub;
 
@@ -13,8 +14,9 @@ class ClientConfig
   protected $hostname;
   protected $origin;
   protected $clientName;
+  static $config_directory;
 
-  public function __construct($config)
+  public function __construct($config = array())
   {
     if (!empty($config['api_key'])) {
       $this->apiKey = $config['api_key'];
@@ -33,15 +35,34 @@ class ClientConfig
     }
   }
 
-  static public function loadFromInput(InputInterface $input)
+  static public function loadFromInput(InputInterface $input, OutputInterface $output)
   {
-    $config_file = $input->getOption('config');
+    $config_file = $input->getOption('client');
+    $config_location = self::getConfigDirectory() . '/' . $config_file;
     $value = [];
-    if (file_exists($config_file)) {
-      $value = Yaml::parse(file_get_contents($config_file));
+    if (file_exists($config_location)) {
+      $output->writeln("<info>Loading client $config_file.</info>");
+      $value = Yaml::parse(file_get_contents($config_location));
+    }
+    else {
+      throw new \RuntimeException("No client connection found. Cannot interact with Content Hub.");
     }
 
     return new static($value);
+  }
+
+  static public function getConfigDirectory()
+  {
+    if (empty(self::$config_directory)) {
+      self::$config_directory = getenv('HOME') . '/.content-hub/clients';
+    }
+    if (!is_dir(dirname(self::$config_directory)) && !mkdir(dirname(self::$config_directory))) {
+      throw new \RuntimeException("Cannot create config directory: " . dirname(self::$config_directory));
+    }
+    if (!is_dir(self::$config_directory) && !mkdir(self::$config_directory)) {
+      throw new \RuntimeException("Cannot create config directory: " . self::$config_directory);
+    }
+    return self::$config_directory;
   }
 
   public function getApiKey()
@@ -118,9 +139,9 @@ class ClientConfig
       $yaml = Yaml::dump($config);
 
       if (!$config_file) {
-        $config_file = getenv('HOME') . '/.content-hub-client-cli-config';
+        $config_file = $config['client_name'];
       }
-      return file_put_contents($config_file, $yaml);
+      return file_put_contents(self::getConfigDirectory() . '/' . $config_file, $yaml);
   }
 }
 

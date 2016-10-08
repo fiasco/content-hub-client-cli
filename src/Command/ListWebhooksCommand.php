@@ -17,19 +17,12 @@ class ListWebhooksCommand extends Command
         $this
             ->setName('list:webhooks')
             ->setDescription('List all clients connected to API key.')
-            ->addOption(
-               'config',
-               'c',
-               InputOption::VALUE_OPTIONAL,
-               'Specify the config file to load api client credentials out of.',
-               getenv('HOME') . '/.content-hub-client-cli-config'
-            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $config = ClientConfig::loadFromInput($input);
+        $config = ClientConfig::loadFromInput($input, $output);
 
         $client = $config->loadClient();
         $settings = $client->getSettings();
