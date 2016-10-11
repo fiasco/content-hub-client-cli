@@ -39,6 +39,25 @@ class ClientConfig
     }
   }
 
+  static public function listConnections()
+  {
+    $base_dir = self::getConfigDirectory();
+    if (!$handle = opendir($base_dir)) {
+      throw new \RuntimeException("Cannot open directory: " . $base_dir);
+    }
+    $list = [];
+    while (false !== ($entry = readdir($handle))) {
+       $path = $base_dir . '/' . $entry;
+       if (is_link($path) || is_dir($path)) {
+         continue;
+       }
+       if ($value = Yaml::parse(file_get_contents($path))) {
+         $list[$value['origin']] = $value['client_name'];
+       }
+    }
+    return $list;
+  }
+
   static public function loadFromInput(InputInterface $input, OutputInterface $output)
   {
     $config_file = $input->getOption('client');

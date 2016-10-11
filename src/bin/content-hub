@@ -10,6 +10,7 @@ use Application\Application;
 $application = new Application();
 $application->add(new Command\ListWebhooksCommand());
 $application->add(new Command\ListClientsCommand());
+$application->add(new Command\ListConnectionsCommand());
 $application->add(new Command\ClientRegisterCommand());
 $application->add(new Command\ClientDeleteCommand());
 $application->add(new Command\WebhookDeleteCommand());
