@@ -11,6 +11,7 @@ class ClientConfig
 {
   protected $apiKey;
   protected $secretKey;
+  protected $sharedSecret;
   protected $hostname;
   protected $origin;
   protected $clientName;
@@ -33,15 +34,23 @@ class ClientConfig
     if (!empty($config['client_name'])) {
       $this->clientName = $config['client_name'];
     }
+    if (!empty($config['shared_secret'])) {
+      $this->sharedSecret = $config['shared_secret'];
+    }
   }
 
   static public function loadFromInput(InputInterface $input, OutputInterface $output)
   {
     $config_file = $input->getOption('client');
+    $output->writeln("<info>Loading client $config_file.</info>");
+    return self::load($config_file);
+  }
+
+  static public function load($config_file)
+  {
     $config_location = self::getConfigDirectory() . '/' . $config_file;
     $value = [];
     if (file_exists($config_location)) {
-      $output->writeln("<info>Loading client $config_file.</info>");
       $value = Yaml::parse(file_get_contents($config_location));
     }
     else {
@@ -120,6 +129,17 @@ class ClientConfig
       return $this;
   }
 
+  public function getSharedSecret() {
+    if (!empty($this->sharedSecret)) {
+      return $this->sharedSecret;
+    }
+    if (!$client = $this->loadClient()) {
+      return '';
+    }
+    $this->sharedSecret = $client->getSettings()->getSharedSecret();
+    return $this->sharedSecret;
+  }
+
   public function loadClient()
   {
     $config['base_url'] = $this->hostname;
@@ -135,6 +155,7 @@ class ClientConfig
         'api_key' => $this->getApiKey(),
         'hostname' => $this->getHostname(),
         'secret_key' => $this->getSecretKey(),
+        'shared_secret' => $this->getSharedSecret(),
       ];
       $yaml = Yaml::dump($config);
 
