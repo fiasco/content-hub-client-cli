@@ -50,7 +50,7 @@ try {
 
   if ($webhook['status'] == "pending") {
     $request->registerResponse();
-    $logger("Webhook registration request recieved and processed.");
+    $logger("Webhook registration request received and processed.");
   }
   else {
     $logger(strtr('uuid|crud|status|message', $webhook));
