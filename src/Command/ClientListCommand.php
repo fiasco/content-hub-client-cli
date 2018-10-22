@@ -10,12 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 use Config\ClientConfig;
 
-class ListClientsCommand extends Command
+class ClientListCommand extends Command
 {
   protected function configure()
     {
         $this
-            ->setName('list:clients')
+            ->setName('client:list')
             ->setDescription('List all clients connected to API key.')
         ;
     }

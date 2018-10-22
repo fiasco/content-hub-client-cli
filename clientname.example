@@ -1,0 +1,6 @@
+# place this file in ~/.content-hub/clients/ and call the CLI with --client=clientname
+origin: cb531ebb-d7b4-4a80-512b-0caf88a49067
+client_name: clientname
+hostname: 'https://use1-sandbox.content-hub.acquia.com'
+api_key: ***
+secret_key: ***

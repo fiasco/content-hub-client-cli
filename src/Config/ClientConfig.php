@@ -61,8 +61,11 @@ class ClientConfig
   static public function loadFromInput(InputInterface $input, OutputInterface $output)
   {
     $config_file = $input->getOption('client');
-    $output->writeln("<info>Loading client $config_file.</info>");
-    return self::load($config_file);
+    $config_location = self::getConfigDirectory() . '/' . $config_file;
+    if (file_exists($config_location)) {
+      $output->writeln("<info>Loading client $config_file.</info>");
+      return self::load($config_file);
+    }
   }
 
   static public function load($config_file)
