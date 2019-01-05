@@ -38,12 +38,21 @@ class EntitiesListCommand extends Command
                'The type of entity to retrieve',
                ''
             )
+            ->addOption(
+               'meta',
+               'm',
+               InputOption::VALUE_OPTIONAL,
+               'Option to return metadata (true or false)',
+               ''
+            )
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $config = ClientConfig::loadFromInput($input, $output);
+
+        $show_metadata = $input->getOption('meta');
 
         $options = [
           'limit' => $input->getOption('limit'),
@@ -56,18 +65,28 @@ class EntitiesListCommand extends Command
         $entities = $client->listEntities(array_filter($options));
 
         $rows = [];
+        if ($show_metadata) {
+          $headers = array('UUID', 'Origin', 'Modified', 'Type', 'Metadata','Title');
+        } else {
+          $headers = array('UUID', 'Origin', 'Modified', 'Type', 'Title');
+        }
         foreach ($entities['data'] as $entity) {
           $row = $entity;
           unset($row['attributes']);
           if (!empty($entity['attributes']['title'])) {
-            $row['title'] = array_shift($entity['attributes']['title']);
+            $row['Title'] = array_shift($entity['attributes']['title']);
+          }
+          if (!empty($entity['metadata']) && $show_metadata) {
+            $row['metadata'] = json_encode($row['metadata']);
+          } else {
+            unset($row['metadata']);
           }
           $rows[] = $row;
         }
 
         $table = new Table($output);
         $table
-            ->setHeaders(array('UUID', 'Origin', 'Modified', 'Type', 'Title'))
+            ->setHeaders($headers)
             ->setRows($rows)
         ;
         $table->render();
