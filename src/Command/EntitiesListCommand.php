@@ -62,6 +62,11 @@ class EntitiesListCommand extends Command
           if (!empty($entity['attributes']['title'])) {
             $row['title'] = array_shift($entity['attributes']['title']);
           }
+          $data = json_decode(base64_decode($row['metadata']['data']), TRUE);
+          if (isset($data['title']['value'])) {
+            $row['title'] = array_shift($data['title']['value']);
+          }
+          unset($row['metadata']);
           $rows[] = $row;
         }
 
