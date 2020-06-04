@@ -1,9 +1,9 @@
 <?php
 
-namespace HttpFoundation;
+namespace AcquiaContentHubCli\HttpFoundation;
 
 use Symfony\Component\HttpFoundation\Request;
-use Config\ClientConfig;
+use AcquiaContentHubCli\Config\ClientConfig;
 use Acquia\ContentHubClient\ResponseSigner;
 
 class WebhookRequest extends Request

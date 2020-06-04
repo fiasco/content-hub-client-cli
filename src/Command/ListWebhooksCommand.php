@@ -1,6 +1,6 @@
 <?php
 
-namespace Command;
+namespace AcquiaContentHubCli\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,14 +8,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
-use Config\ClientConfig;
+use AcquiaContentHubCli\Config\ClientConfig;
 
 class ListWebhooksCommand extends Command
 {
   protected function configure()
     {
         $this
-            ->setName('list:webhooks')
+            ->setName('webhook:list')
             ->setDescription('List all clients connected to API key.')
         ;
     }
@@ -28,19 +28,21 @@ class ListWebhooksCommand extends Command
         $settings = $client->getSettings();
         $list = $settings->getWebhooks();
 
-        // Flatten the filters array before rendering the table.
-        array_walk($list, function(&$value, &$key) {
-          if (is_array($value['filters'])) {
-            $value['filters'] = implode(",", $value['filters']);
+        foreach ($list as $webhook) {
+          $rows = [];
+          foreach ($webhook as $key => $value) {
+            if (is_array($value)) {
+              $value = implode(",", $value);
+            }
+            $rows[] = [$key, $value];
           }
-        });
-
-        $table = new Table($output);
-        $table
-            ->setHeaders(array('UUID', 'URL', 'Version', 'disable retries', 'Filters'))
-            ->setRows($list)
-        ;
-        $table->render();
+          $table = new Table($output);
+          $table
+              ->setHeaders(['Key', 'Value'])
+              ->setRows($rows)
+          ;
+          $table->render();
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Application;
+namespace AcquiaContentHubCli\Application;
 
 use Symfony\Component\Console\Application as BaseApplication;
 use Symfony\Component\Console\Input\InputOption;

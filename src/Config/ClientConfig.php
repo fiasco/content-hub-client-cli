@@ -1,11 +1,14 @@
 <?php
 
-namespace Config;
+namespace AcquiaContentHubCli\Config;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
-use Acquia\ContentHubClient\ContentHub;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Console\Logger\ConsoleLogger;
+use Symfony\Component\Console\Output\ConsoleOutput;
+use Acquia\ContentHubClient\ObjectFactory;
 
 class ClientConfig
 {
@@ -66,6 +69,7 @@ class ClientConfig
       $output->writeln("<info>Loading client $config_file.</info>");
       return self::load($config_file);
     }
+    throw new \InvalidArgumentException("No client found in $config_location.");
   }
 
   static public function load($config_file)
@@ -166,7 +170,26 @@ class ClientConfig
   {
     $config['base_url'] = $this->hostname;
     $config['client-user-agent'] = 'Content Hub Client CLI';
-    return new ContentHub($this->apiKey, $this->secretKey, $this->origin, $config);
+
+    return ObjectFactory::getCHClient(
+      $config,
+      new ConsoleLogger(new ConsoleOutput(ConsoleOutput::VERBOSITY_VERBOSE)),
+      ObjectFactory::instantiateSettings(
+        $this->getClientName(),
+        $this->getOrigin(),
+        $this->getApiKey(),
+        $this->getSecretKey(),
+        $this->getHostname(),
+        $this->getSharedSecret()
+      ),
+      ObjectFactory::getHmacAuthMiddleware(
+        ObjectFactory::getAuthenticationKey(
+          $this->getApiKey(),
+          $this->getSecretKey()
+        )
+      ),
+      new EventDispatcher()
+    );
   }
 
   public function save($config_file = FALSE)

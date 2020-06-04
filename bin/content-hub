@@ -3,9 +3,10 @@
 
 date_default_timezone_set('UTC');
 
-require __DIR__.'/../../vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 
-use Application\Application;
+use AcquiaContentHubCli\Application\Application;
+use AcquiaContentHubCli\Command;
 
 $application = new Application();
 $application->add(new Command\ListWebhooksCommand());

@@ -1,6 +1,6 @@
 <?php
 
-namespace Command;
+namespace AcquiaContentHubCli\Command;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Config\ClientConfig;
+use AcquiaContentHubCli\Config\ClientConfig;
 use Symfony\Component\Yaml\Dumper;
 
 class EntitiesShowCommand extends Command
@@ -30,10 +30,8 @@ class EntitiesShowCommand extends Command
     {
         $config = ClientConfig::loadFromInput($input, $output);
         $client = $config->loadClient();
-
-        $entity = $client->readEntity($input->getArgument('uuid'));
-
-        $entity = json_decode($entity->json(), TRUE);
+        $uuid = $input->getArgument('uuid');
+        $entity = $client->getResponseJson($client->get("entities/$uuid"));
 
         // This just helps when generating diffs for example.
         if (!empty($entity['attributes']) && is_array($entity['attributes'])) {
@@ -41,7 +39,7 @@ class EntitiesShowCommand extends Command
         }
 
         $dumper = new Dumper();
-        $output->writeln($dumper->dump($entity, 10, 2));
+        $output->writeln($dumper->dump($entity['data']['data'], 10, 2));
     }
 
 }
