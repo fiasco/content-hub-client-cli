@@ -21,5 +21,5 @@ also, using client:register.
 
 ## Register clients in bulk
 ```
-./src/bin/content-hub --client=toyota.prod client:register site1.prod site2.prod site3.prod
+./src/bin/content-hub --client=sitegroup.prod client:register site1.prod site2.prod site3.prod
 ```
